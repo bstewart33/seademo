@@ -10,6 +10,7 @@ var dmz =
        , time: require("dmz/runtime/time")
        , undo: require("inspectorUndo")
        , vector: require("dmz/types/vector")
+       , mask: require("dmz/types/mask")
        , util: require("dmz/types/util")
        }
   // Constants
@@ -40,16 +41,18 @@ var dmz =
   , _helos = []
   , _carrier
   , _path =
-//    // Back and Forth
-//    [ dmz.vector.create([0.5, 0.0, 0.0])
-//    , dmz.vector.create([-0.5, 0.0, 0.0])
-//    ]
-//    // Sideways V
-//    [ dmz.vector.create([-0.5, 0.0, 0.0])
-//    , dmz.vector.create([0.5, 0.0, -0.5])
-//    , dmz.vector.create([-0.5, 0.0, 0.0])
-//    , dmz.vector.create([0.5, 0.0, 0.5])
-//    ]
+/*    // Back and Forth
+    [ dmz.vector.create([0.5, 0.0, 0.0])
+    , dmz.vector.create([-0.5, 0.0, 0.0])
+    ]
+*/
+/*    // Sideways V
+    [ dmz.vector.create([-0.5, 0.0, 0.0])
+    , dmz.vector.create([0.5, 0.0, -0.5])
+    , dmz.vector.create([-0.5, 0.0, 0.0])
+    , dmz.vector.create([0.5, 0.0, 0.5])
+    ]
+*/
     // Box
     [ dmz.vector.create([0.5, 0.0, 0.0])
     , dmz.vector.create([0.5, 0.0, -0.5])
@@ -58,6 +61,7 @@ var dmz =
     , dmz.vector.create([-0.5, 0.0, 0.5])
     , dmz.vector.create([0.5, 0.0, 0.5])
     ]
+
   , _pathWidth = 800
   , _pathHeight = 200
   , _sim
@@ -253,13 +257,54 @@ dmz.object.create.observe(self, function (handle, type) {
 
    if (type.isOfType(CarrierType)) {
 
-      if (dmz.object.hil()) { dmz.object.flag(handle, dmz.object.HILAttribute, false); }
+      if (dmz.object.hil()) {
+
+         dmz.object.flag(handle, dmz.object.HILAttribute, false);
+      }
 
       _carrier = handle;
+
       dmz.object.flag(handle, dmz.object.HILAttribute, true);
    }
 });
 
+dmz.object.destroy.observe(self, function (handle) {
+
+   if (_helos[handle]) {
+
+      dmz.object.destroy (_helos[handle].icon);
+
+      _helos.splice(handle,1);
+   }
+   else if (_carrier == handle) { _carrier = 0; }
+});
+
+/* - not necessary unless using a UI to switch path types
+dmz.object.state.observe(self, function (handle, attribute, state){
+
+   var type = dmz.object.type(handle)
+     , obj
+     ;
+
+   if (type.isOfType(HelicopterType) &&
+       attribute == dmz.seaConst.PathAtt) {
+
+self.log.warn("Helicopter::PathAtt: ");
+      if (_sim && !_sim.control.isRunning()) {
+      }
+   if (handle && dmz.object.isObject(handle)) {
+
+      state = dmz.object.state(handle);
+
+      if (!state) { state = dmz.mask.create(); }
+
+      state = state.or(HighlightState);
+
+      dmz.object.state(handle, null, state);
+   }
+   }
+});
+*/
 dmz.object.position.observe(self, function (handle, attr, pos){
 
    var type = dmz.object.type(handle)
@@ -281,8 +326,8 @@ dmz.object.position.observe(self, function (handle, attr, pos){
          dmz.object.vector(handle, dmz.seaConst.OffsetAttr, offset);
 
          dmz.object.counter(handle, dmz.seaConst.TargetAttr, 0);
-         dmz.object.position(handle, dmz.seaConst.TargetAttr, _targetPosition(obj));
-//         _targetPosition(_helos[handle]);
+         dmz.object.position(
+            handle, dmz.seaConst.TargetAttr, _targetPosition(obj));
       }
    }
 });
@@ -312,14 +357,21 @@ dmz.module.subscribe(self, "objectInit", function (Mode, module) {
 
          dmz.object.orientation(handle, null, StartDir);
          dmz.object.velocity(handle, null, [0, 0, 0]);
-         dmz.object.position(handle, dmz.seaConst.StartAttr, dmz.object.position(handle));
+         dmz.object.position(
+            handle, dmz.seaConst.StartAttr, dmz.object.position(handle));
          dmz.object.vector(handle, dmz.seaConst.OffsetAttr, [0, 0 ,0]);
          dmz.object.scalar(handle, dmz.seaConst.SpeedAttr, 0);
+
+//         dmz.object.state(handle, dmz.seaConst.PathAttr, dmz.mask.create ());
+
          dmz.object.counter(handle, dmz.seaConst.TargetAttr, 0);
-         dmz.object.counter.min(handle, dmz.seaConst.TargetAttr, 0);
-         dmz.object.counter.max(handle, dmz.seaConst.TargetAttr, _path.length-1);
+         dmz.object.counter.min(
+            handle, dmz.seaConst.TargetAttr, 0);
+         dmz.object.counter.max(
+            handle, dmz.seaConst.TargetAttr, _path.length-1);
          dmz.object.counter.rollover(handle, dmz.seaConst.TargetAttr, true);
-         dmz.object.position(handle, dmz.seaConst.TargetAttr, _targetPosition(obj));
+         dmz.object.position(
+            handle, dmz.seaConst.TargetAttr, _targetPosition(obj));
       });
    }
 });

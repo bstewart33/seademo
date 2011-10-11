@@ -125,6 +125,25 @@ dmz.object.create.observe(self, function (handle, type) {
    else if (type.isOfType(SensorType)) { _targets.push(handle); }
 });
 
+dmz.object.destroy.observe(self, function (handle) {
+
+   if (_source == handle) { _source = 0; }
+   else {
+
+      var len = _targets.length
+        , ix = 0
+        ;
+
+      for (ix = 0; ix < len; ix++) {
+
+         if (_targets[ix] == handle) {
+
+            _targets.splice(ix, 1); ix = len;
+         }
+      }
+   }
+});
+
 dmz.module.subscribe(self, "simulation", function (Mode, module) {
 
    if (Mode === dmz.module.Activate) {
@@ -155,9 +174,10 @@ dmz.module.subscribe(self, "simulation", function (Mode, module) {
          );
       });
 
-//      module.reset(self, function () {
+      module.reset(self, function () {
 
-//      });
+         graphView.clearData ();
+      });
 
       module.timeSlice(self, function (time) {
 

@@ -74,12 +74,14 @@ _save = function (file) {
    }
 };
 
-dmz.main.addMenu (self, "&File", "New", { shortcut: "new" }, function () {
+dmz.main.insertMenu (self, "&File", "E&xit", "New", { shortcut: "new" },
+function () {
 
    _reset ();
 });
 
-dmz.main.addMenu (self, "&File", "Open", { shortcut: "open" }, function () {
+dmz.main.insertMenu (self, "&File", "E&xit", "Open", { shortcut: "open" },
+function () {
 
    var data
      , archive
@@ -89,7 +91,7 @@ dmz.main.addMenu (self, "&File", "Open", { shortcut: "open" }, function () {
    _reset ();
 
    file = dmz.fileDialog.getOpenFileName(
-      { caption: "Load file", filter: "Data File (*.csdf)" },
+      { caption: "Load file", filter: "Data File (*" + FileExt + ")" },
       dmz.main.window());
 
    if (file) {
@@ -117,15 +119,16 @@ dmz.main.addMenu (self, "&File", "Open", { shortcut: "open" }, function () {
    else { self.log.error("No file selected"); }
 });
 
-dmz.main.addSeparator("&File");
+dmz.main.insertSeparator("&File", "E&xit");
 
-dmz.main.addMenu(self, "&File", "Save", { shortcut: "save" }, function () {
+dmz.main.insertMenu(self, "&File", "E&xit", "Save", { shortcut: "save" },
+function () {
 
    if (_currentFile) { _save(_currentFile); }
    else if (_saveAsAction) { _saveAsAction.trigger(); }
 });
 
-_saveAsAction = dmz.main.addMenu(self, "&File", "Save As", { shortcut: "saveas" },
+_saveAsAction = dmz.main.insertMenu(self, "&File", "E&xit", "Save As", { shortcut: "saveas" },
 function () {
 
    var archive
@@ -155,3 +158,6 @@ function () {
       _save(name);
    }
 });
+
+dmz.main.insertSeparator("&File", "E&xit");
+

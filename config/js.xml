@@ -11,6 +11,8 @@
    <plugin name="dmzJsExtV8Script" scope="javascript"/>
    <plugin name="dmzJsExtV8File" scope="javascript"/>
    <plugin name="dmzJsExtV8Module" scope="javascript"/>
+   <plugin name="dmzJsExtV8ConfigIO" scope="javascript"/>
+   <plugin name="dmzJsExtV8Zip" scope="javascript"/>
 </plugin-list>
 <javascript>
    <path value="../js/scripts"/>
@@ -24,12 +26,12 @@
    <instance name="destroyerInspector"/>
    <instance name="helicopterInspector"/>
    <instance name="submarineInspector"/>
-   <!-- <instance name="fileMenu"/> -->
+   <instance name="fileMenu"/>
    <!-- <instance name="editMenu"/> -->
    <instance name="log"/>
    <instance name="create"/>
    <instance name="move"/>
-   <instance name="link"/>
+   <!-- <instance name="link"/> -->
    <instance name="delete"/>
    <instance name="highlight"/>
    <instance name="carrierMain"/>

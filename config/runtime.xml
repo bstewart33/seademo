@@ -57,7 +57,7 @@
          </template>
       </canvas-object-basic>
    </object-type>
-   <object-type name="Submarine" parent="Unknown">
+   <object-type name="Submarine" parent="Hostile">
       <icon-pallet resource="submarine icon"/>
       <canvas-object/>
       <canvas-object-basic>

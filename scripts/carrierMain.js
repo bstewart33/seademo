@@ -54,6 +54,15 @@ _update = function (time) {
    }
 };
 
+dmz.object.destroy.observe(self, function (handle) {
+
+   if (_carriers[handle]) {
+
+      _carriers.splice(handle,1);
+      //_carriers[handle] = 0;
+   }
+});
+
 dmz.module.subscribe(self, "objectInit", function (Mode, module) {
 
    if (Mode === dmz.module.Activate) {
